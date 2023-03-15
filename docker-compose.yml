@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+  web:
+    external: true
+
+services:
+  gophish:
+    image: gophish/gophish:0.12.1
+    container_name: gophish
+    ports:
+      - 3010:80
+      - 3333:3333
+    volumes:
+      - ./db:/opt/gophish/db
+      - ./config.json:/opt/gophish/config.json
+      - ./gophish.db:/opt/gophish/gophish.db
+      - ./static/endpoint:/opt/gophish/static/endpoint
+    networks:
+      - web
+    labels:
+      - traefik.http.routers.gophish.rule=Host(`gophish.domain.com`)
+      - traefik.http.routers.gophish.tls=true
+      - traefik.http.routers.gophish.tls.certresolver=myresolver
+      - traefik.docker.network=web
